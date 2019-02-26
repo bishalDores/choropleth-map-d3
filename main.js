@@ -85,8 +85,77 @@ function mergeData(data) {
     fetch(URL_SVG)
         .then((response)=>response.json())
         .then((json)=>{
-            
+            //loop through the educational array
+            for(let i = 0;i<data.length;i++){
+                let fips = data[i].fips;
+                //loop through the array of geometries of the counties
+                let geometries = json.objects.counties.geometries;
+                for(let j = 0; j<geometries.length;j++){
+                    let id = geometries[j].id;
+                    if (fips == id){
+                        geometries[j] = Object.assign({},geometries[j],data[i]);
+                        break;
+                    }
+                }
+            }
+
+            // console.log(json);
+            return json;
         })
+        .then((json) => drawMap(json));
 }
+// json data including educational data and county data
+function drawMap(data) {
+    colorScale.domain([0,d3.max(data.objects.counties.geometries, (d)=>d.bachelorsOrHigher)]);
+    // console.log(data)
+
+    /* as d3.geoPath() works with GeoJSON, it is first necessary to convert the object into a type of understandable format
+     topojson.feature is a function from the topojson library which converts a topology to a feature collection
+     it accepts two arguments, the object itself and the subset to be "feature-ized"*/
+    let feature = topojson.feature(data, data.objects.counties);
+    console.log(feature)
+
+    //function that creates SVG values from the coordinates included in the JSON file
+    const path = d3.geoPath();
+
+    // console.log(path(feature))
+
+    //append a path element for each feature
+
+    svgCanvas.selectAll("path")
+        .data(feature.features)
+        .enter()
+        .append("path")
+        .attr("d",path)
+        .attr("transform",`scale(0.82,0.62)`)
+         //fcc user stories
+        .attr("class","county")
+        .attr("data-fips",(d,i) => data.objects.counties.geometries[i].fips)
+        .attr("data-state",(d,i) => data.objects.counties.geometries[i].state)
+        .attr("data-area",(d,i) => data.objects.counties.geometries[i].area_name)
+        .attr("data-education",(d,i) => data.objects.counties.geometries[i].bachelorsOrHigher)
+        // include a fill property dependant on the bachelorsOrHigher property and the color scale
+        .attr("fill",(d,i)=>colorScale(data.objects.counties.geometries[i].bachelorsOrHigher))
+        //including tooltip property
+        .on("mouseenter",(d,i)=>{
+            tooltip.style("opacity",1)
+                .attr("data-fips",data.objects.counties.geometries[i].fips)
+                .attr("data-education",data.objects.counties.geometries[i].bachelorsOrHigher)
+                .style("left",`${d3.event.layerX+5}px`)
+                .style("top",`${d3.event.layerY+5}px`);
+            tooltip
+                .select("p.area")
+                .text(() => `${data.objects.counties.geometries[i].area_name}, ${data.objects.counties.geometries[i].state}`);
+            tooltip
+                .select("p.education")
+                .text(() => `${data.objects.counties.geometries[i].area_name}, ${data.objects.counties.geometries[i].bachelorsOrHigher}%`);
+        })
+        .on("mouseout",()=>tooltip.style("opacity",0))
+
+
+}
+
+
+
 
 
