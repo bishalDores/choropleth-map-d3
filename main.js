@@ -80,8 +80,13 @@ fetch(URL_DATA)
     .then((json)=>mergeData(json));
 
 function mergeData(data) {
-    // console.log(data);
-
+// console.log(data);
+//fetch svg value
+    fetch(URL_SVG)
+        .then((response)=>response.json())
+        .then((json)=>{
+            
+        })
 }
 
 
