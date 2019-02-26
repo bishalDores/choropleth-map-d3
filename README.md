@@ -1,5 +1,5 @@
-##FreeCodeCamp Project
-###Data Visualization Projects - Visualize Data with a Choropleth Math
+## FreeCodeCamp Project
+### Data Visualization Projects - Visualize Data with a Choropleth Math
 Dataset(Two Dataset):<br>
 * US Education Data: https://raw.githubusercontent.com/no-stack-dub-sack/testable-projects-fcc/master/src/data/choropleth_map/for_user_education.json
 * US County Data: https://raw.githubusercontent.com/no-stack-dub-sack/testable-projects-fcc/master/src/data/choropleth_map/counties.json <br>
@@ -7,7 +7,7 @@ Dataset(Two Dataset):<br>
 ** <strong>d3 js library v4 is used</strong> ** <br>
 ** <strong>topojson library is used</strong> **
 
-######Sample user stories:
+###### Sample user stories:
 * My choropleth should have a title with a corresponding id="title".
 * My choropleth should have a description element with a corresponding id="description".
 * My choropleth should have counties with a corresponding class="county" that represent the data.
